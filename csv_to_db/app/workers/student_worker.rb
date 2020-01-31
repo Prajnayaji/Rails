@@ -1,13 +1,13 @@
 class StudentWorker
   include Sidekiq::Worker
-  sidekiq_options retry: false, :queue => "data_import_worker"
+  sidekiq_options retry: false
 
   require 'csv'
 
   def perform(csv_path)
     puts "hiiiiiiiiiiiiiiiiiiiiiiiiiiiii"
     puts csv_path
-    CSV.parse(csv_path.read, headers: true) do |row|
+    CSV.parse(csv_path, headers: true) do |row|
       Student.create(
         roll_no: row[0],
         name: row[1],
@@ -15,9 +15,6 @@ class StudentWorker
         marks: row[3]
       )
   end
-
-  flash[:notice] = "All values are added to db."
-  render 'trial'
     # Do something
   end
 end
